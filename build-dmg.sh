@@ -6,6 +6,17 @@ DMG_FILE_NAME="${BIN_DIR}/${APP_NAME}-Installer.dmg"
 VOLUME_NAME="${APP_NAME} Installer"
 APP_PATH="${BIN_DIR}/${APP_NAME}.app"
 
+# Build the application
+wails3 package
+
+# First, sign the application bundle
+echo "Signing the application..."
+codesign --force --options runtime --deep --sign "Developer ID Application: KAI WANG (N2X78TUUFG)" "${APP_PATH}"
+
+# Verify the signature
+echo "Verifying the application signature..."
+codesign --verify --deep --strict --verbose=2 "${APP_PATH}"
+
 # Since create-dmg does not clobber, be sure to delete previous DMG
 [[ -f "${DMG_FILE_NAME}" ]] && rm "${DMG_FILE_NAME}"
 
