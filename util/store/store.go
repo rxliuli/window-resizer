@@ -46,8 +46,8 @@ func (s *StoreAPI) GetPresets() ([]PresetSize, error) {
 		presets = []PresetSize{
 			{
 				ID:     ulid.Make().String(),
-				Width:  1024,
-				Height: 768,
+				Width:  1280,
+				Height: 800,
 			},
 		}
 	}
