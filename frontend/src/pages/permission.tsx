@@ -69,12 +69,6 @@ export function PermissionPage() {
                 permission.
               </p>
             </div>
-            <div className="relative pl-8 py-3 bg-muted/50 rounded-lg">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
-                4
-              </div>
-              <p>Find and enable our application</p>
-            </div>
           </div>
 
           <Button

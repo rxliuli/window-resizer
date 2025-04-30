@@ -126,47 +126,54 @@ export function HomePage() {
                   Enter the dimensions for your window preset
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="width" className="text-right">
-                    Width
-                  </label>
-                  <Input
-                    id="width"
-                    type="number"
-                    className="col-span-3"
-                    value={newWidth}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setNewWidth(e.target.value)
-                    }
-                  />
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault()
+                  await handleSave()
+                }}
+              >
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label htmlFor="width" className="text-right">
+                      Width
+                    </label>
+                    <Input
+                      id="width"
+                      type="number"
+                      className="col-span-3"
+                      value={newWidth}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setNewWidth(e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label htmlFor="height" className="text-right">
+                      Height
+                    </label>
+                    <Input
+                      id="height"
+                      type="number"
+                      className="col-span-3"
+                      value={newHeight}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setNewHeight(e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="height" className="text-right">
-                    Height
-                  </label>
-                  <Input
-                    id="height"
-                    type="number"
-                    className="col-span-3"
-                    value={newHeight}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setNewHeight(e.target.value)
-                    }
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  disabled={updatePresetsMutation.isPending}
-                >
-                  Save
-                </Button>
-              </DialogFooter>
+                <DialogFooter>
+                  <Button variant="outline" type="button" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={updatePresetsMutation.isPending}
+                  >
+                    Save
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
         </div>
