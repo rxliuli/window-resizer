@@ -1,10 +1,3 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -101,15 +94,14 @@ export function HomePage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Window Size Presets</CardTitle>
-        <CardDescription>
+    <div className="p-6 space-y-4">
+      <div>
+        <h2 className="text-lg font-semibold">Window Size Presets</h2>
+        <p className="text-sm text-muted-foreground">
           Manage your preset window sizes for quick resizing
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4">
+        </p>
+      </div>
+      <div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -215,7 +207,6 @@ export function HomePage() {
             ))}
           </TableBody>
         </Table>
-      </CardContent>
-    </Card>
+    </div>
   )
 }
