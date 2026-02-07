@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=window-resizer
+Comment=A program that resizes windows
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/WindowResizer %u
+Terminal=false
+Type=Application
+Icon=WindowResizer
+Categories=Utility;
+StartupWMClass=WindowResizer
+
+ 
