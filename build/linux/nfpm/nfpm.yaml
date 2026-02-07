@@ -3,52 +3,30 @@
 #
 # The lines below are called `modelines`. See `:help modeline`
 
-name: "WindowResizer"
+name: "window-resizer"
 arch: ${GOARCH}
 platform: "linux"
-version: "v0.2.2"
+version: "0.1.0"
 section: "default"
 priority: "extra"
 maintainer: ${GIT_COMMITTER_NAME} <${GIT_COMMITTER_EMAIL}>
-description: "A program that resizes windows"
-vendor: "rxliuli"
+description: "My Product Description"
+vendor: "My Company"
 homepage: "https://wails.io"
 license: "MIT"
 release: "1"
 
 contents:
-  - src: "./bin/WindowResizer"
-    dst: "/usr/local/bin/WindowResizer"
+  - src: "./bin/window-resizer"
+    dst: "/usr/local/bin/window-resizer"
   - src: "./build/appicon.png"
-    dst: "/usr/share/icons/hicolor/128x128/apps/WindowResizer.png"
-  - src: "./build/linux/WindowResizer.desktop"
-    dst: "/usr/share/applications/WindowResizer.desktop"
+    dst: "/usr/share/icons/hicolor/128x128/apps/window-resizer.png"
+  - src: "./build/linux/window-resizer.desktop"
+    dst: "/usr/share/applications/window-resizer.desktop"
 
-# Default dependencies for Debian 12/Ubuntu 22.04+ with WebKit 4.1
 depends:
-  - libgtk-3-0
-  - libwebkit2gtk-4.1-0
-
-# Distribution-specific overrides for different package formats and WebKit versions
-overrides:
-  # RPM packages for RHEL/CentOS/AlmaLinux/Rocky Linux (WebKit 4.0)
-  rpm:
-    depends:
-      - gtk3
-      - webkit2gtk4.1
-  
-  # Arch Linux packages (WebKit 4.1)  
-  archlinux:
-    depends:
-      - gtk3
-      - webkit2gtk-4.1
-
-# scripts section to ensure desktop database is updated after install
-scripts:
-  postinstall: "./build/linux/nfpm/scripts/postinstall.sh"
-  # You can also add preremove, postremove if needed
-  # preremove: "./build/linux/nfpm/scripts/preremove.sh"
-  # postremove: "./build/linux/nfpm/scripts/postremove.sh"
+  - gtk3
+  - libwebkit2gtk
 
 # replaces:
 #   - foobar
@@ -65,3 +43,8 @@ scripts:
 #   - not-foo
 #   - not-bar
 # changelog: "changelog.yaml"
+# scripts:
+#   preinstall: ./build/linux/nfpm/scripts/preinstall.sh
+#   postinstall: ./build/linux/nfpm/scripts/postinstall.sh
+#   preremove: ./build/linux/nfpm/scripts/preremove.sh
+#   postremove: ./build/linux/nfpm/scripts/postremove.sh
