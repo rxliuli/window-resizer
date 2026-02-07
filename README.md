@@ -45,9 +45,8 @@ _Manage your custom window size presets easily._
 
 ## 🛠️ Built With
 
-- **Electron:** For creating the cross-platform desktop application shell.
+- **Wails:** For creating the cross-platform desktop application shell.
 - **React:** For the Preferences UI.
-- **Node.js:** For the underlying runtime.
 
 ## 🤝 Contributing
 
