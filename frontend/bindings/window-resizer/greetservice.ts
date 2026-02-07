@@ -3,44 +3,32 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
-import {Call as $Call, Create as $Create} from "@wailsio/runtime";
+import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Create } from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
 import * as store$0 from "./util/store/models.js";
 
-export function CheckPermission(): Promise<boolean> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2828054571) as any;
-    return $resultPromise;
+export function CheckPermission(): $CancellablePromise<boolean> {
+    return $Call.ByID(2828054571);
 }
 
-export function ClosePermissionWindow(): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1729154135) as any;
-    return $resultPromise;
+export function ClosePermissionWindow(): $CancellablePromise<void> {
+    return $Call.ByID(1729154135);
 }
 
-export function GetPresets(): Promise<store$0.PresetSize[]> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(390496076) as any;
-    let $typingPromise = $resultPromise.then(($result: any) => {
+export function GetPresets(): $CancellablePromise<store$0.PresetSize[]> {
+    return $Call.ByID(390496076).then(($result: any) => {
         return $$createType1($result);
-    }) as any;
-    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
-    return $typingPromise;
+    });
 }
 
-export function Greet(name: string): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1411160069, name) as any;
-    return $resultPromise;
+export function RequestPermission(): $CancellablePromise<void> {
+    return $Call.ByID(3154168290);
 }
 
-export function RequestPermission(): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3154168290) as any;
-    return $resultPromise;
-}
-
-export function SetPresets(presets: store$0.PresetSize[]): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(895970328, presets) as any;
-    return $resultPromise;
+export function SetPresets(presets: store$0.PresetSize[]): $CancellablePromise<void> {
+    return $Call.ByID(895970328, presets);
 }
 
 // Private type creation functions

@@ -19,7 +19,7 @@ func OpenPreferencesWindow(app *application.App) {
 	}
 
 	fmt.Println("Creating new window")
-	preferencesWindow = app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
+	preferencesWindow = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title: "Window Resizer",
 		URL:   "/",
 	})
@@ -43,7 +43,7 @@ func OpenPermissionWindow(app *application.App) {
 		return
 	}
 
-	permissionWindow = app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
+	permissionWindow = app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title: "Window Resizer",
 		URL:   "/#/permission",
 	})

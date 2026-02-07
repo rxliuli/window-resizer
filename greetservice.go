@@ -10,10 +10,6 @@ import (
 
 type GreetService struct{}
 
-func (g *GreetService) Greet(name string) string {
-	return "Hello " + name + "!"
-}
-
 func (g *GreetService) GetPresets() ([]store.PresetSize, error) {
 	storeAPI := store.NewStoreAPI()
 	return storeAPI.GetPresets()
@@ -25,7 +21,7 @@ func (g *GreetService) SetPresets(presets []store.PresetSize) error {
 	if err != nil {
 		return err
 	}
-	tray.RefreshTrayMenus(ctx.GetApp(), ctx.GetTrayMenu())
+	tray.RefreshTrayMenus(ctx.GetApp(), ctx.GetTray())
 	return nil
 }
 

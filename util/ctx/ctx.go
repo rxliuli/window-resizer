@@ -7,9 +7,8 @@ import (
 )
 
 var (
-	app      *application.App
-	tray     *application.SystemTray
-	trayMenu *application.Menu
+	app  *application.App
+	tray *application.SystemTray
 )
 
 // Init initializes the context
@@ -31,12 +30,4 @@ func GetApp() *application.App {
 // GetTray returns the tray instance
 func GetTray() *application.SystemTray {
 	return tray
-}
-
-func SetTrayMenu(tm *application.Menu) {
-	trayMenu = tm
-}
-
-func GetTrayMenu() *application.Menu {
-	return trayMenu
 }

@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 
-	"window-resizer/util/ctx"
 	"window-resizer/util/resize"
 	"window-resizer/util/store"
 	"window-resizer/util/window"
@@ -16,21 +15,30 @@ import (
 var trayIcon embed.FS
 
 var tray *application.SystemTray
+var menu *application.Menu
 
 func CreateTray(app *application.App) *application.SystemTray {
-	tray = app.NewSystemTray()
+	tray = app.SystemTray.New()
 	iconBytes, _ := trayIcon.ReadFile("assets/tray-icon.png")
 	tray.SetTemplateIcon(iconBytes)
 
-	menu := application.NewMenu()
-	RefreshTrayMenus(app, menu)
-	ctx.SetTrayMenu(menu)
+	menu = app.NewMenu()
+	buildMenuItems(app, menu)
 	tray.SetMenu(menu)
 	return tray
 }
 
-func RefreshTrayMenus(app *application.App, menu *application.Menu) {
+func RefreshTrayMenus(app *application.App, tray *application.SystemTray) {
+	// Workaround for Wails v3 bug: SetMenu on macOS only updates the internal
+	// reference without refreshing the native NSMenu. Instead of creating a new
+	// menu, we reuse the same menu object and call Update() so the existing
+	// native menu pointer stays valid and gets rebuilt.
 	menu.Clear()
+	buildMenuItems(app, menu)
+	menu.Update()
+}
+
+func buildMenuItems(app *application.App, menu *application.Menu) {
 	storeAPI := store.NewStoreAPI()
 	presets, err := storeAPI.GetPresets()
 	if err != nil {
@@ -53,7 +61,4 @@ func RefreshTrayMenus(app *application.App, menu *application.Menu) {
 	menu.Add("Quit").SetAccelerator("CmdOrCtrl+Q").OnClick(func(ctx *application.Context) {
 		app.Quit()
 	})
-
-	menu.Update()
-	tray.SetMenu(menu)
 }

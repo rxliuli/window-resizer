@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go build:*)",
+      "WebSearch",
+      "WebFetch(domain:v3alpha.wails.io)",
+      "Bash(wails3 dev:*)",
+      "Bash(gh search:*)",
+      "Bash(gh api:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
