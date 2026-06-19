@@ -48,6 +48,9 @@ func buildMenuItems(app *application.App, menu *application.Menu) {
 	for _, preset := range presets {
 		menu.Add(fmt.Sprintf("Resize to %dx%d", preset.Width, preset.Height)).OnClick(func(ctx *application.Context) {
 			fmt.Printf("Resize to %dx%d\n", preset.Width, preset.Height)
+			if window.ResizePreferencesWindow(preset.Width, preset.Height) {
+				return
+			}
 			err := resize.ResizeWindow(preset.Width, preset.Height)
 			if err != nil {
 				fmt.Println("Error resizing window:", err)

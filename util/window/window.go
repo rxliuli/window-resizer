@@ -63,3 +63,11 @@ func ClosePermissionWindow() {
 		permissionWindow = nil
 	}
 }
+
+func ResizePreferencesWindow(width, height int) bool {
+	if preferencesWindow == nil {
+		return false
+	}
+	preferencesWindow.SetSize(width, height)
+	return true
+}
