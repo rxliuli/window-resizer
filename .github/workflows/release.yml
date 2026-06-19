@@ -2,14 +2,31 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+    paths:
+      - 'frontend/package.json'
 
 permissions:
   contents: write
 
 jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.version.outputs.changed }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: rxliuli/version-check@v1
+        id: version
+        with:
+          file: ./frontend/package.json
+
   build-macos:
+    needs: check-version
+    if: needs.check-version.outputs.changed == 'true'
     runs-on: macos-latest
     strategy:
       matrix:
@@ -50,6 +67,8 @@ jobs:
           path: bin/WindowResizer-macos-${{ matrix.arch }}.zip
 
   build-windows:
+    needs: check-version
+    if: needs.check-version.outputs.changed == 'true'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -84,16 +103,24 @@ jobs:
           path: bin/WindowResizer-windows-amd64.zip
 
   release:
-    needs: [build-macos, build-windows]
+    needs: [check-version, build-macos, build-windows]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
           merge-multiple: true
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: artifacts/*.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="v${{ needs.check-version.outputs.version }}"
+          git tag "${VERSION}"
+          git push origin "${VERSION}"
+          gh release create "${VERSION}" \
+            --title "Release ${VERSION}" \
+            --generate-notes \
+            artifacts/*.zip
