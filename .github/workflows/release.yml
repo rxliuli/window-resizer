@@ -71,7 +71,11 @@ jobs:
           echo "$APPLE_API_KEY" | base64 --decode > ~/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8
 
       - name: Build universal binary
-        run: task darwin:build:universal PRODUCTION=true
+        run: |
+          task darwin:build PRODUCTION=true ARCH=amd64 OUTPUT=bin/WindowResizer-amd64
+          task darwin:build PRODUCTION=true ARCH=arm64 OUTPUT=bin/WindowResizer-arm64
+          lipo -create -output bin/WindowResizer bin/WindowResizer-amd64 bin/WindowResizer-arm64
+          rm bin/WindowResizer-amd64 bin/WindowResizer-arm64
 
       - name: Create .app bundle
         run: task darwin:create:app:bundle
