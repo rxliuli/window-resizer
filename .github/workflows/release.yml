@@ -28,9 +28,7 @@ jobs:
     needs: check-version
     if: needs.check-version.outputs.changed == 'true'
     runs-on: macos-latest
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
+    environment: release-macOS
     steps:
       - uses: actions/checkout@v4
 
@@ -52,19 +50,81 @@ jobs:
       - name: Install Task
         run: go install github.com/go-task/task/v3/cmd/task@latest
 
-      - name: Build
-        run: task darwin:build PRODUCTION=true ARCH=${{ matrix.arch }}
+      - name: Setup certificates
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_DEVELOPERID_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_DEVELOPERID_PASSWORD }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+        run: |
+          security create-keychain -p actions $RUNNER_TEMP/app-signing.keychain-db
+          security set-keychain-settings -lut 21600 $RUNNER_TEMP/app-signing.keychain-db
+          security unlock-keychain -p actions $RUNNER_TEMP/app-signing.keychain-db
+          security default-keychain -s $RUNNER_TEMP/app-signing.keychain-db
+
+          echo "$CERTIFICATE_BASE64" | base64 --decode > $RUNNER_TEMP/cert.p12
+          security import $RUNNER_TEMP/cert.p12 -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $RUNNER_TEMP/app-signing.keychain-db
+
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k actions $RUNNER_TEMP/app-signing.keychain-db
+
+          mkdir -p ~/private_keys
+          echo "$APPLE_API_KEY" | base64 --decode > ~/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8
+
+      - name: Build universal binary
+        run: task darwin:build:universal PRODUCTION=true
 
       - name: Create .app bundle
         run: task darwin:create:app:bundle
 
-      - name: Zip .app bundle
-        run: cd bin && zip -r WindowResizer-macos-${{ matrix.arch }}.zip WindowResizer.app
+      - name: Sign app
+        env:
+          SIGNING_IDENTITY: ${{ vars.SIGNING_IDENTITY_DMG }}
+        run: |
+          codesign --force --deep --sign "${SIGNING_IDENTITY}" \
+            --options runtime \
+            --timestamp \
+            "bin/WindowResizer.app"
+
+          codesign --verify --deep --strict "bin/WindowResizer.app"
+
+      - name: Create DMG
+        env:
+          SIGNING_IDENTITY: ${{ vars.SIGNING_IDENTITY_DMG }}
+        run: |
+          brew install create-dmg
+          create-dmg \
+            --volname "WindowResizer" \
+            --window-pos 200 120 \
+            --window-size 660 400 \
+            --icon-size 100 \
+            --icon "WindowResizer.app" 180 170 \
+            --hide-extension "WindowResizer.app" \
+            --app-drop-link 480 170 \
+            --codesign "${SIGNING_IDENTITY}" \
+            "WindowResizer-macos.dmg" \
+            "bin/WindowResizer.app"
+
+      - name: Notarize DMG
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: |
+          xcrun notarytool submit "WindowResizer-macos.dmg" \
+            --key ~/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8 \
+            --key-id "${APPLE_API_KEY_ID}" \
+            --issuer "${APPLE_API_ISSUER}" \
+            --wait
+
+          xcrun stapler staple "WindowResizer-macos.dmg"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: WindowResizer-macos-${{ matrix.arch }}
-          path: bin/WindowResizer-macos-${{ matrix.arch }}.zip
+          name: WindowResizer-macos
+          path: WindowResizer-macos.dmg
+
+      - name: Cleanup keychain
+        if: always()
+        run: security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
 
   build-windows:
     needs: check-version
@@ -123,4 +183,4 @@ jobs:
           gh release create "${VERSION}" \
             --title "Release ${VERSION}" \
             --generate-notes \
-            artifacts/*.zip
+            artifacts/*
