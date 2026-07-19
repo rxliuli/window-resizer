@@ -2,7 +2,7 @@
 
 A native macOS menu bar utility to quickly resize the active window to your predefined dimensions.
 
-![WindowResizer Preferences](./docs/preferences.jpg)
+![WindowResizer Preferences](./docs/preferences.png)
 _Manage your custom window size presets easily._
 
 ## ✨ Features
