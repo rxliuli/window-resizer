@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 APP_NAME="WindowResizer"
 BIN_DIR="bin"
 DMG_FILE_NAME="${BIN_DIR}/${APP_NAME}-Installer.dmg"
 VOLUME_NAME="${APP_NAME} Installer"
 APP_PATH="${BIN_DIR}/${APP_NAME}.app"
+SIGNING_IDENTITY="Developer ID Application: KAI WANG (N2X78TUUFG)"
 
-# Build the application
-wails3 package
+# Build the universal app bundle
+./scripts/build-app.sh
 
-# First, sign the application bundle
+# Sign the application bundle
 echo "Signing the application..."
-codesign --force --options runtime --deep --sign "Developer ID Application: KAI WANG (N2X78TUUFG)" "${APP_PATH}"
+codesign --force --options runtime --timestamp --sign "${SIGNING_IDENTITY}" "${APP_PATH}"
 
 # Verify the signature
 echo "Verifying the application signature..."
@@ -30,7 +32,7 @@ echo "Creating and signing DMG..."
   --icon "${APP_NAME}.app" 200 190 \
   --hide-extension "${APP_NAME}.app" \
   --app-drop-link 600 185 \
-  --codesign "Developer ID Application: KAI WANG (N2X78TUUFG)" \
+  --codesign "${SIGNING_IDENTITY}" \
   --notarize "WindowResizer" \
   "${DMG_FILE_NAME}" \
   "${APP_PATH}"
