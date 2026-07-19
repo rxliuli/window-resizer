@@ -22,4 +22,13 @@ cp Resources/Info.plist "${APP_PATH}/Contents/"
 cp Resources/icons.icns "${APP_PATH}/Contents/Resources/"
 cp Resources/tray-icon.png "${APP_PATH}/Contents/Resources/"
 
+# Sign with Developer ID when available so local builds share the released
+# build's TCC (Accessibility) identity; fall back to ad-hoc otherwise.
+IDENTITY="Developer ID Application: KAI WANG (N2X78TUUFG)"
+if security find-identity -v -p codesigning 2>/dev/null | grep -q "${IDENTITY}"; then
+    codesign --force --sign "${IDENTITY}" "${APP_PATH}"
+else
+    codesign --force --sign - "${APP_PATH}"
+fi
+
 echo "Built ${APP_PATH}"
