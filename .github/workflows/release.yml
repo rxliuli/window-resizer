@@ -82,6 +82,7 @@ jobs:
         env:
           SIGNING_IDENTITY: ${{ vars.SIGNING_IDENTITY_DMG }}
         run: |
+          brew untap aws/tap 2>/dev/null || true
           brew install create-dmg
           create-dmg \
             --volname "WindowResizer" \
@@ -108,7 +109,7 @@ jobs:
 
           xcrun stapler staple "WindowResizer-macos.dmg"
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: WindowResizer-macos
           path: WindowResizer-macos.dmg
@@ -123,7 +124,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
           merge-multiple: true
