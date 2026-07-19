@@ -18,7 +18,7 @@ enum ResizeError: LocalizedError {
 
 /// Direct port of the resize logic from the Go version's resize_darwin.go.
 enum Resizer {
-    private static let log = Logger(subsystem: "com.wails.window-resizer", category: "resize")
+    private static let log = Logger(subsystem: "com.rxliuli.window-resizer", category: "resize")
 
     static func resizeFocusedWindow(width: Int, height: Int) throws {
         log.info("Resizing focused window to \(width)x\(height)")

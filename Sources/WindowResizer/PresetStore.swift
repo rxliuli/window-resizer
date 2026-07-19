@@ -17,7 +17,7 @@ final class PresetStore: ObservableObject {
 
     private let fileURL: URL
     private var raw: [String: Any]
-    private let log = Logger(subsystem: "com.wails.window-resizer", category: "store")
+    private let log = Logger(subsystem: "com.rxliuli.window-resizer", category: "store")
 
     private init() {
         let configDir = FileManager.default.homeDirectoryForCurrentUser

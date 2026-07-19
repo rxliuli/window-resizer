@@ -3,7 +3,7 @@ import os.log
 
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem!
-    private let log = Logger(subsystem: "com.wails.window-resizer", category: "app")
+    private let log = Logger(subsystem: "com.rxliuli.window-resizer", category: "app")
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)

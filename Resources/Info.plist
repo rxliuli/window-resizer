@@ -8,10 +8,8 @@
     <string>WindowResizer</string>
     <key>CFBundleExecutable</key>
     <string>WindowResizer</string>
-    <!-- Kept from the Wails version so the existing Accessibility (TCC) grant
-         carries over for current users. -->
     <key>CFBundleIdentifier</key>
-    <string>com.wails.window-resizer</string>
+    <string>com.rxliuli.window-resizer</string>
     <key>CFBundleVersion</key>
     <string>0.3.0</string>
     <key>CFBundleShortVersionString</key>
