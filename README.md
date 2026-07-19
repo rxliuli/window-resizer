@@ -19,9 +19,18 @@ _Manage your custom window size presets easily._
 
 ## 🚀 Installation
 
+### Homebrew
+
+```bash
+brew install --cask rxliuli/tap/window-resizer
+```
+
+### Manual
+
 1. Go to the [**Releases page**](https://github.com/rxliuli/window-resizer/releases).
 2. Download the latest `.dmg`, open it, and drag `WindowResizer.app` to your `/Applications` folder.
-3. Grant Accessibility permission when prompted — it is required to resize other apps' windows.
+
+Either way, grant Accessibility permission when prompted — it is required to resize other apps' windows.
 
 Requires macOS 13 or later.
 
