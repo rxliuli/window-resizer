@@ -40,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
 
         let preferences = NSMenuItem(
-            title: "Preferences", action: #selector(openPreferences), keyEquivalent: ",")
+            title: "Settings…", action: #selector(openPreferences), keyEquivalent: ",")
         preferences.target = self
         preferences.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
         menu.addItem(preferences)

@@ -44,7 +44,7 @@ Requires macOS 13 or later.
    - The active window will instantly snap to that size.
 3. **Manage Presets:**
    - Click the application icon in the menu bar.
-   - Select "Preferences".
+   - Select "Settings…".
    - In the "Window Size Presets" window:
      - Click **+ Add Preset** to create a new size definition. Enter the desired Width and Height (in pixels) and save.
      - Click the **pencil icon (✎)** next to a preset to edit its dimensions.
