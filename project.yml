@@ -18,10 +18,13 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    # 版本号的真相在 Resources/Info.plist（发版 CI 读它判断要不要发）。
-    # 这里的值只服务于本机 Xcode archive，发版时由 release.yml 按 Info.plist 覆盖。
-    MARKETING_VERSION: "0.3.2"
-    CURRENT_PROJECT_VERSION: "0.3.2"
+    # 版本号的**唯一真相**就是这里：Resources/Info.plist 里写的是
+    # $(MARKETING_VERSION) / $(CURRENT_PROJECT_VERSION)，由 Xcode 在构建时替换。
+    # 发版 CI 用 rxliuli/version-check 读这个文件判断要不要发，bump 也只改这一处。
+    MARKETING_VERSION: "0.3.3"
+    # build number 按版本号推：x*10000 + y*100 + z（0.3.3 -> 303）。
+    # CI 侧 dmg.sh 用同一公式算出来覆盖它，这里的值只服务于本机 archive。
+    CURRENT_PROJECT_VERSION: "303"
     DEAD_CODE_STRIPPING: YES
     # 没有 run script 阶段，写上是给将来立规矩（同 linkpure）。
     ENABLE_USER_SCRIPT_SANDBOXING: YES

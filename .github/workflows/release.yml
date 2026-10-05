@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'Resources/Info.plist'
+      # 版本号的唯一真相在 project.yml 的 MARKETING_VERSION
+      - 'project.yml'
 
 permissions:
   contents: write
@@ -18,23 +19,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          # 必须 >= 2：version-check 要读上一个提交来做对比
           fetch-depth: 2
+      # 版本号读 project.yml 的 settings.base.MARKETING_VERSION（Resources/Info.plist
+      # 里是 $(MARKETING_VERSION) 模板）。这个 action 原生识别 XcodeGen 规格，路径自动定位。
       - id: version
-        run: |
-          read_version() {
-            python3 -c "import plistlib,sys;print(plistlib.load(open(sys.argv[1],'rb'))['CFBundleShortVersionString'])" "$1"
-          }
-          CURRENT=$(read_version Resources/Info.plist)
-          PREVIOUS=""
-          if git show HEAD~1:Resources/Info.plist > /tmp/prev.plist 2>/dev/null; then
-            PREVIOUS=$(read_version /tmp/prev.plist || true)
-          fi
-          echo "version=${CURRENT}" >> "$GITHUB_OUTPUT"
-          if [[ "${CURRENT}" != "${PREVIOUS}" ]]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          fi
+        uses: rxliuli/version-check@v1
+        with:
+          file: project.yml
 
   build-macos:
     needs: check-version
