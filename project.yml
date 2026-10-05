@@ -1,0 +1,51 @@
+name: WindowResizer
+
+# 这个文件是 .xcodeproj 的唯一真相来源（生成的 .xcodeproj 在 .gitignore 里）。
+# 改用 xcodegen 的原因：手工维护的 project.pbxproj 会腐烂 —— AppDowngrader 就是这么坏的
+# （新加的 Logger.swift 没人同步进 pbxproj，xcodebuild archive 直接报 cannot find 'Logger' in scope）。
+#
+# 为什么这里要有个 .xcodeproj 而不只用 Package.swift：SwiftPM 是库/CLI 的构建系统，
+# 它不产出 .app —— 没有 bundle 布局、没有 Info.plist 落位、没有签名/公证那套。
+# 那些正是发布需要的全部，只有 xcodebuild archive 现成给你。Package.swift 保留给
+# `swift run` / `swift test` 的开发循环用（两边共用同一份 Sources，不复制代码）。
+
+options:
+  bundleIdPrefix: com.rxliuli
+  deploymentTarget:
+    macOS: "13.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    # 版本号的真相在 Resources/Info.plist（发版 CI 读它判断要不要发）。
+    # 这里的值只服务于本机 Xcode archive，发版时由 release.yml 按 Info.plist 覆盖。
+    MARKETING_VERSION: "0.3.1"
+    CURRENT_PROJECT_VERSION: "0.3.1"
+    DEAD_CODE_STRIPPING: YES
+    # 没有 run script 阶段，写上是给将来立规矩（同 linkpure）。
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: N2X78TUUFG
+
+targets:
+  WindowResizer:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/WindowResizer
+      # 约定：Resources/ 的内容原样进 Contents/Resources/。
+      # Info.plist 必须排除 —— 它在 Copy Bundle Resources 里会让 Xcode 直接报错，
+      # 它由下面的 INFOPLIST_FILE 处理成 Contents/Info.plist。
+      # tray-icon.png 正是靠这条约定被带上（代码里用 Bundle.main 读它）。
+      - path: Resources
+        excludes:
+          - Info.plist
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_NAME: WindowResizer
+        PRODUCT_BUNDLE_IDENTIFIER: com.rxliuli.window-resizer
+        INFOPLIST_FILE: Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_HARDENED_RUNTIME: YES

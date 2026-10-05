@@ -3,3 +3,7 @@ bin
 frontend
 .DS_Store
 .env
+
+# xcodegen 的产物
+WindowResizer.xcodeproj
+build
