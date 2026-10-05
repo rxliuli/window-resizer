@@ -1,13 +1,15 @@
 name: WindowResizer
 
-# 这个文件是 .xcodeproj 的唯一真相来源（生成的 .xcodeproj 在 .gitignore 里）。
-# 改用 xcodegen 的原因：手工维护的 project.pbxproj 会腐烂 —— AppDowngrader 就是这么坏的
-# （新加的 Logger.swift 没人同步进 pbxproj，xcodebuild archive 直接报 cannot find 'Logger' in scope）。
+# This file is the single source of truth for the .xcodeproj (the generated one is gitignored).
+# Why xcodegen: a hand-maintained project.pbxproj rots - that is exactly how AppDowngrader broke
+# (a newly added Logger.swift was never synced into the pbxproj, and xcodebuild archive failed
+# with cannot find 'Logger' in scope).
 #
-# 为什么这里要有个 .xcodeproj 而不只用 Package.swift：SwiftPM 是库/CLI 的构建系统，
-# 它不产出 .app —— 没有 bundle 布局、没有 Info.plist 落位、没有签名/公证那套。
-# 那些正是发布需要的全部，只有 xcodebuild archive 现成给你。Package.swift 保留给
-# `swift run` / `swift test` 的开发循环用（两边共用同一份 Sources，不复制代码）。
+# Why an .xcodeproj at all, rather than just Package.swift: SwiftPM is a build system for
+# libraries and CLIs, and it does not produce a .app - no bundle layout, no Info.plist placement,
+# no signing, no notarization. Those are exactly what shipping needs, and only
+# `xcodebuild archive` hands them to you. Package.swift stays for the `swift run` / `swift test`
+# development loop (both share the same Sources; no code is duplicated).
 
 options:
   bundleIdPrefix: com.rxliuli
@@ -18,15 +20,17 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    # 版本号的**唯一真相**就是这里：Resources/Info.plist 里写的是
-    # $(MARKETING_VERSION) / $(CURRENT_PROJECT_VERSION)，由 Xcode 在构建时替换。
-    # 发版 CI 用 rxliuli/version-check 读这个文件判断要不要发，bump 也只改这一处。
+    # The **single source of truth** for the version is right here: Resources/Info.plist holds
+    # $(MARKETING_VERSION) / $(CURRENT_PROJECT_VERSION), substituted by Xcode at build time.
+    # The release CI reads this file with rxliuli/version-check to decide whether to publish, so
+    # a version bump is a one-line change here and nowhere else.
     MARKETING_VERSION: "0.3.3"
-    # build number 按版本号推：x*10000 + y*100 + z（0.3.3 -> 303）。
-    # CI 侧 dmg.sh 用同一公式算出来覆盖它，这里的值只服务于本机 archive。
+    # The build number is derived from the version as x*10000 + y*100 + z (0.3.3 -> 303).
+    # dmg.sh computes the same value in CI and overrides this; the value here only serves local
+    # archives.
     CURRENT_PROJECT_VERSION: "303"
     DEAD_CODE_STRIPPING: YES
-    # 没有 run script 阶段，写上是给将来立规矩（同 linkpure）。
+    # No run script phases here; set it now to establish the rule for later (same as linkpure).
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: N2X78TUUFG
@@ -37,10 +41,11 @@ targets:
     platform: macOS
     sources:
       - path: Sources/WindowResizer
-      # 约定：Resources/ 的内容原样进 Contents/Resources/。
-      # Info.plist 必须排除 —— 它在 Copy Bundle Resources 里会让 Xcode 直接报错，
-      # 它由下面的 INFOPLIST_FILE 处理成 Contents/Info.plist。
-      # tray-icon.png 正是靠这条约定被带上（代码里用 Bundle.main 读它）。
+      # Convention: whatever is in Resources/ lands verbatim in Contents/Resources/.
+      # Info.plist has to be excluded - leaving it in Copy Bundle Resources makes Xcode fail
+      # outright - and INFOPLIST_FILE below turns it into Contents/Info.plist instead.
+      # tray-icon.png is carried along by exactly this convention (the code reads it with
+      # Bundle.main).
       - path: Resources
         excludes:
           - Info.plist
