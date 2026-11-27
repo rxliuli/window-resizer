@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      # The single source of truth for the version is MARKETING_VERSION in project.yml
-      - 'project.yml'
+      # The single source of truth for the version is MARKETING_VERSION in project.xcproj
+      - 'WindowResizer.xcodeproj/project.xcproj'
 
 permissions:
   contents: write
@@ -21,31 +21,32 @@ jobs:
         with:
           # Must be >= 2: version-check reads the previous commit to compare against
           fetch-depth: 2
-      # The version is read from settings.base.MARKETING_VERSION in project.yml
+      # The version is read from build-settings.MARKETING_VERSION in project.xcproj
       # (Resources/Info.plist holds a $(MARKETING_VERSION) template). This action understands
-      # XcodeGen specs natively, so the path is located automatically.
+      # Xcode's JSON project.xcproj format natively, so the path is located automatically.
       - id: version
         uses: rxliuli/version-check@v1
         with:
-          file: project.yml
+          file: WindowResizer.xcodeproj/project.xcproj
 
   build-macos:
     needs: check-version
     if: needs.check-version.outputs.changed == 'true'
-    runs-on: macos-latest
+    # WindowResizer.xcodeproj uses Xcode's JSON project format (project.xcproj, introduced in
+    # Xcode 27.2), which requires Xcode 27+. Switch back to macos-latest once it ships Xcode 27+.
+    runs-on: xcode-27
     environment: release-macOS
 
     steps:
       - uses: actions/checkout@v6
 
-      # .xcodeproj is a xcodegen product (gitignored), so CI has to generate it.
-      # Using project.yml instead of committing a project.pbxproj: a hand-maintained project
-      # file rots - AppDowngrader's did, a source file added later was never synced into it and
-      # archive stopped compiling.
-      - name: Generate Xcode project
+      # Ensure Xcode 27.2 is active on the xcode-27 runner while 27.1 is still its default.
+      - name: Select Xcode 27.2
         run: |
-          brew install xcodegen
-          xcodegen generate
+          if [ -d /Applications/Xcode_27.2.app ]; then
+            sudo xcode-select -s /Applications/Xcode_27.2.app/Contents/Developer
+          fi
+          xcodebuild -version
 
       # archive -> Developer ID sign -> DMG -> notarize -> staple -> Gatekeeper check.
       # The rules and the reasoning behind them live in the shared action:

@@ -4,6 +4,8 @@ frontend
 .DS_Store
 .env
 
-# xcodegen 的产物
-WindowResizer.xcodeproj
+# Xcode per-user state
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
 build
